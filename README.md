@@ -9,4 +9,6 @@ KPortScan : https://newamooz.com/wp-content/uploads/2022/10/KPortScan%203.0.rar 
 
 DUBrute : https://s9.picofile.com/d/8301380568/265b1619-589b-46a7-bb35-0697db1a6f90/DuBrute_8_2.zip password : `no password`
 
+DUBrute : https://s2.picofile.com/file/8262294542/DUBrute_2_2_breach_team_org_dj_hack_.rar.html password : `breach-team.org_dj-hack`
+
 MasScan : https://mega.nz/file/LX5UTKhR#Bh3_K35s8vb6kyhj4PEoNP4LbvfJz074gEFJET1HaMo password : `newamooz.com`

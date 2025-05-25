@@ -1,0 +1,10 @@
+admin
+administrator
+user
+user1
+user01
+server
+pc
+account
+test
+root

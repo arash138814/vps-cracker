@@ -1,0 +1,14 @@
+yönetici
+yönetim
+kullanıcı
+kullanıcı1
+kullanıcı2
+kullanıcı3
+birey
+birey1
+birey2
+birey3
+remot
+sunucu
+destek
+tarayıcı

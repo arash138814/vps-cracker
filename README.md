@@ -12,3 +12,5 @@ DUBrute : https://s9.picofile.com/d/8301380568/265b1619-589b-46a7-bb35-0697db1a6
 DUBrute : https://s2.picofile.com/file/8262294542/DUBrute_2_2_breach_team_org_dj_hack_.rar.html password : `breach-team.org_dj-hack`
 
 MasScan : https://mega.nz/file/LX5UTKhR#Bh3_K35s8vb6kyhj4PEoNP4LbvfJz074gEFJET1HaMo password : `newamooz.com`
+
+ClearLock : https://www.snapfiles.com/downloads/clearlock/dlclearlock.html password : `no password`

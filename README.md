@@ -14,3 +14,22 @@ DUBrute : https://s2.picofile.com/file/8262294542/DUBrute_2_2_breach_team_org_dj
 MasScan : https://mega.nz/file/LX5UTKhR#Bh3_K35s8vb6kyhj4PEoNP4LbvfJz074gEFJET1HaMo password : `newamooz.com`
 
 ClearLock : https://www.snapfiles.com/downloads/clearlock/dlclearlock.html password : `no password`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Driver : `https://pcsupport.lenovo.com/us/en/products/laptops-and-netbooks/ideapad-s-series-netbooks/ideapad-slim-3-15irh8/83em/83em003tps/pf4s1pr4?linkTrack=Homepage%3ABody_Search%20Products&searchType=6&keyWordSearch=PF4S1PR4`

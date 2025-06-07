@@ -32,4 +32,4 @@ ClearLock : https://www.snapfiles.com/downloads/clearlock/dlclearlock.html passw
 
 
 
-Driver : `https://pcsupport.lenovo.com/us/en/products/laptops-and-netbooks/ideapad-s-series-netbooks/ideapad-slim-3-15irh8/83em/83em003tps/pf4s1pr4?linkTrack=Homepage%3ABody_Search%20Products&searchType=6&keyWordSearch=PF4S1PR4`
+Driver : `https://pcsupport.lenovo.com/us/en/products/laptops-and-netbooks/ideapad-s-series-netbooks/ideapad-slim-3-15irh8/83em/83em003tps/pf4s1pr4?linkTrack=Homepage%3ABody_Search%20Products&searchType=6&keyWordSearch=PF4S1PR4`    `https://pcsupport.lenovo.com/us/en/products/laptops-and-netbooks/ideapad-s-series-netbooks/ideapad-slim-3-15irh8/83em/83em003tps/pf4s1pr4/downloads/driver-list`

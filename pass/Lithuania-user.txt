@@ -1,0 +1,14 @@
+administrators
+admin
+lietotajs
+parbaude
+vaditajs
+viesis
+Administrator
+Admin
+ADMIN
+admin1
+Guest
+guest
+user
+user1

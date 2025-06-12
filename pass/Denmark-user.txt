@@ -1,0 +1,12 @@
+bruger
+bruger1
+adgangskode
+adgangskode1
+gæst
+gæst1
+root
+root1
+mester
+mester1
+leder
+leder1

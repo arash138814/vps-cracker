@@ -2,11 +2,8 @@ from bs4 import BeautifulSoup
 from re import search, IGNORECASE
 from requests import get, post, RequestException
 from time import sleep
-
-# تصحیح توکن با نسخه اصلی که از @BotFather دریافت کردید
 BOT_TOKEN = "8117450822:AAGyqDDtS7_Jvq2hEc3VLHQetIxtq0K7o"
 BASE_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
-
 def extract_dorks(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
     tbody = soup.find('tbody')
@@ -36,9 +33,7 @@ def extract_dorks(html_content):
         else:
             print(f"No font tag in row: {dork_cell}")
     return dorks
-
 def get_updates(offset=None):
-    """دریافت پیام‌ها و استخراج chat_id"""
     url = f"{BASE_URL}/getUpdates"
     params = {"timeout": 100, "offset": offset}
     try:
@@ -51,9 +46,7 @@ def get_updates(offset=None):
     except RequestException as e:
         print(f"Error in get_updates: {e}")
         return None
-
 def send_message(chat_id, text):
-    """ارسال پیام به کاربر"""
     url = f"{BASE_URL}/sendMessage"
     params = {"chat_id": chat_id, "text": text}
     try:
@@ -64,20 +57,16 @@ def send_message(chat_id, text):
     except RequestException as e:
         print(f"Error in send_message: {e}")
         return {"ok": False}
-
 def main():
     last_dork = ""
     chat_id = None
-
-    # دریافت اولیه chat_id
     print("Waiting for first message to get chat_id...")
     while chat_id is None:
         update = get_updates()
         if update and "message" in update:
             chat_id = update["message"]["chat"]["id"]
             print(f"Found chat_id: {chat_id}")
-        sleep(5)  # منتظر بمانید تا پیام دریافت شود
-
+        sleep(5)
     print("Bot started...")
     while True:
         try:
@@ -93,7 +82,6 @@ def main():
                 print("No new dorks or same as last time")
         except Exception as e:
             print(f"Error in main loop: {e}")
-        sleep(300)  # 5 دقیقه صبر کنید (300 ثانیه)
-
+        sleep(300)
 if __name__ == "__main__":
     main()

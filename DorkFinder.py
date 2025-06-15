@@ -1,91 +1,67 @@
-from bs4 import BeautifulSoup
-import re
-import requests
-import time
-from datetime import datetime
-BOT_TOKEN = "86078049:GNDALW69mrTsaWNnU5L2dCsKmsAaTTHNXWLDSLCe"
-BASE_URL = f"https://tapi.bale.ai/bot{BOT_TOKEN}"
-chat_ids = set()
-def extract_dorks(html_content):
-    soup = BeautifulSoup(html_content, 'html.parser')
-    tbody = soup.find('tbody')
-    if not tbody:
-        print("No tbody found in HTML")
-        return []
-    rows = tbody.find_all('tr')
-    if not rows:
-        print("No rows found in tbody")
-        return []
-    dorks = []
-    for row in rows:
-        cells = row.find_all('td')
-        if len(cells) < 2:
-            continue
-        dork_cell = cells[1]
-        dork_text = dork_cell.find('font')
-        if dork_text:
-            text_content = dork_text.get_text(strip=True)
-            dork_match = re.search(r'Dork:\s*(.+)', text_content, re.IGNORECASE)
-            if dork_match:
-                dork = dork_match.group(1).strip()
-                dorks.append(dork)
-                print(f"Extracted dork: {dork}")
-            else:
-                print(f"No dork match in: {text_content}")
-        else:
-            print(f"No font tag in row: {dork_cell}")
-    return dorks
-def get_updates(offset=None):
-    url = f"{BASE_URL}/getUpdates"
-    params = {"timeout": 100, "offset": offset}
-    try:
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-        updates = response.json()
-        if updates.get("ok") and updates.get("result"):
-            return updates["result"][-1]
-        return None
-    except requests.RequestException as e:
-        print(f"Error in get_updates: {e}")
-        return None
-def send_message(chat_id, text):
-    url = f"{BASE_URL}/sendMessage"
-    params = {"chat_id": chat_id, "text": text}
-    try:
-        response = requests.post(url, params=params)
-        response.raise_for_status()
-        print(f"Message sent to {chat_id}: {text}")
-        return response.json()
-    except requests.RequestException as e:
-        print(f"Error in send_message: {e}")
-        return {"ok": False}
-def main():
-    last_dork = ""
-    chat_id = None
-    print("Waiting for first message to get chat_id...")
-    while chat_id is None:
-        update = get_updates()
-        if update and "message" in update:
-            chat_id = update["message"]["chat"]["id"]
-            chat_ids.add(chat_id)
-            print(f"Found chat_id: {chat_id}")
-        time.sleep(5)
-    print("Bot started...")
-    while True:
+import socket
+import select
+import struct
+from socketserver import ThreadingMixIn, TCPServer, StreamRequestHandler
+
+class Socks5Proxy(StreamRequestHandler):
+    def handle(self):
         try:
-            url = "https://cxsecurity.com/dorks/"
-            response = requests.get(url).text
-            dorks = extract_dorks(response)
-            if dorks and dorks[0] != last_dork:
-                new_dork = dorks[0]
-                print(f"New dork detected: {new_dork}")
-                last_dork = new_dork
-                for cid in chat_ids:
-                    send_message(cid, f"New dork found at {datetime.now()}: {new_dork}")
+            # مرحله ۱: احراز هویت (Authentication)
+            self.connection.recv(1024)  # دریافت نسخه و متدهای احراز هویت
+            self.connection.sendall(b"\x05\x00")  # پاسخ: نیازی به احراز هویت نیست
+
+            # مرحله ۲: دریافت درخواست اتصال
+            data = self.connection.recv(1024)
+            if len(data) < 7:
+                raise Exception("درخواست نامعتبر")
+
+            version, cmd, _, addr_type = struct.unpack("!BBBB", data[:4])
+            if version != 5 or cmd != 1:  # فقط از اتصال (CMD=1) پشتیبانی می‌شود
+                self.connection.sendall(b"\x05\x07\x00\x01\x00\x00\x00\x00\x00\x00")  # پاسخ خطا
+                return
+
+            # استخراج آدرس مقصد
+            if addr_type == 1:  # IPv4
+                remote_addr = socket.inet_ntoa(data[4:8])
+                remote_port = struct.unpack("!H", data[8:10])[0]
+            elif addr_type == 3:  # Domain Name
+                domain_length = data[4]
+                remote_addr = data[5:5+domain_length].decode()
+                remote_port = struct.unpack("!H", data[5+domain_length:7+domain_length])[0]
             else:
-                print("No new dorks or same as last time")
+                raise Exception("نوع آدرس پشتیبانی نمی‌شود")
+
+            # اتصال به مقصد
+            remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            remote.connect((remote_addr, remote_port))
+            
+            # پاسخ موفقیت‌آمیز به کلاینت
+            self.connection.sendall(b"\x05\x00\x00\x01\x00\x00\x00\x00\x00\x00")
+
+            # انتقال داده بین کلاینت و مقصد
+            while True:
+                r, _, _ = select.select([self.connection, remote], [], [])
+                if self.connection in r:
+                    data = self.connection.recv(4096)
+                    if not data:
+                        break
+                    remote.sendall(data)
+                if remote in r:
+                    data = remote.recv(4096)
+                    if not data:
+                        break
+                    self.connection.sendall(data)
+
         except Exception as e:
-            print(f"Error in main loop: {e}")
-        time.sleep(1 * 24 * 60 * 60)
+            print(f"خطا: {e}")
+        finally:
+            remote.close() if 'remote' in locals() else None
+
+class ThreadingTCPServer(ThreadingMixIn, TCPServer):
+    pass
+
 if __name__ == "__main__":
-    main()
+    HOST, PORT = "0.0.0.0", 1080
+    with ThreadingTCPServer((HOST, PORT), Socks5Proxy) as server:
+        print(f"سرور SOCKS5 در حال اجرا روی پورت {PORT}...")
+        server.serve_forever()

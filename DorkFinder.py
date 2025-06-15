@@ -1,18 +1,20 @@
 from bs4 import BeautifulSoup
-from re import search, IGNORECASE
-from requests import get, post, RequestException
-from time import sleep
-BOT_TOKEN = "8117450822:AAGyqDDtS7_Jvq2hEc3VLHQetIxtq0K7o"
-BASE_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
+import re
+import requests
+import time
+from datetime import datetime
+BOT_TOKEN = "86078049:GNDALW69mrTsaWNnU5L2dCsKmsAaTTHNXWLDSLCe"
+BASE_URL = f"https://tapi.bale.ai/bot{BOT_TOKEN}"
+chat_ids = set()
 def extract_dorks(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
     tbody = soup.find('tbody')
     if not tbody:
-        print("No tbody found")
+        print("No tbody found in HTML")
         return []
     rows = tbody.find_all('tr')
     if not rows:
-        print("No rows found")
+        print("No rows found in tbody")
         return []
     dorks = []
     for row in rows:
@@ -23,7 +25,7 @@ def extract_dorks(html_content):
         dork_text = dork_cell.find('font')
         if dork_text:
             text_content = dork_text.get_text(strip=True)
-            dork_match = search(r'Dork:\s*(.+)', text_content, IGNORECASE)
+            dork_match = re.search(r'Dork:\s*(.+)', text_content, re.IGNORECASE)
             if dork_match:
                 dork = dork_match.group(1).strip()
                 dorks.append(dork)
@@ -37,24 +39,24 @@ def get_updates(offset=None):
     url = f"{BASE_URL}/getUpdates"
     params = {"timeout": 100, "offset": offset}
     try:
-        response = get(url, params=params)
+        response = requests.get(url, params=params)
         response.raise_for_status()
         updates = response.json()
         if updates.get("ok") and updates.get("result"):
-            return updates["result"][-1]  # آخرین آپدیت
+            return updates["result"][-1]
         return None
-    except RequestException as e:
+    except requests.RequestException as e:
         print(f"Error in get_updates: {e}")
         return None
 def send_message(chat_id, text):
     url = f"{BASE_URL}/sendMessage"
     params = {"chat_id": chat_id, "text": text}
     try:
-        response = post(url, params=params)
+        response = requests.post(url, params=params)
         response.raise_for_status()
-        print(f"Message sent: {text}")
+        print(f"Message sent to {chat_id}: {text}")
         return response.json()
-    except RequestException as e:
+    except requests.RequestException as e:
         print(f"Error in send_message: {e}")
         return {"ok": False}
 def main():
@@ -65,23 +67,25 @@ def main():
         update = get_updates()
         if update and "message" in update:
             chat_id = update["message"]["chat"]["id"]
+            chat_ids.add(chat_id)
             print(f"Found chat_id: {chat_id}")
-        sleep(5)
+        time.sleep(5)
     print("Bot started...")
     while True:
         try:
             url = "https://cxsecurity.com/dorks/"
-            response = get(url).text
+            response = requests.get(url).text
             dorks = extract_dorks(response)
             if dorks and dorks[0] != last_dork:
                 new_dork = dorks[0]
                 print(f"New dork detected: {new_dork}")
                 last_dork = new_dork
-                send_message(chat_id, f"New dork found: {new_dork}")
+                for cid in chat_ids:
+                    send_message(cid, f"New dork found at {datetime.now()}: {new_dork}")
             else:
                 print("No new dorks or same as last time")
         except Exception as e:
             print(f"Error in main loop: {e}")
-        sleep(300)
+        time.sleep(1 * 24 * 60 * 60)
 if __name__ == "__main__":
     main()

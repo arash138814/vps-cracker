@@ -1,9 +1,0 @@
-Administrator
-Admin
-User
-user1
-ASP.NET
-test
-Guest
-Server
-Người quản lý

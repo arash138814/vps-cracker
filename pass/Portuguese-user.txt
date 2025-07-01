@@ -1,8 +1,0 @@
-administradorusuário
-teste
-senha
-convidado
-gerente
-usuário1
-teste1
-convidado1
